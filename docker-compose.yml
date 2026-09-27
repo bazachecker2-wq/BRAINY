@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  # WebRTC Signaling & Web Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - REDIS_URL=redis://redis:6379
+      - DATABASE_URL=postgres://beamlive:beamlive_secret@postgres:5432/beamlive
+    depends_on:
+      - redis
+      - postgres
+      - mediamtx
+    restart: unless-stopped
+
+  # PostgreSQL for Persistent Room and Session Metadata
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: beamlive
+      POSTGRES_PASSWORD: beamlive_secret
+      POSTGRES_DB: beamlive
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  # Redis for Presence, Scaling Signaling & Realtime PubSub
+  redis:
+    image: redis:7-alpine
+    restart: unless-stopped
+    volumes:
+      - redis_data:/data
+
+  # MediaMTX Media Gateway (RTSP to WebRTC, RTMP Ingest, WHEP/WHIP)
+  mediamtx:
+    image: bluenviron/mediamtx:latest
+    ports:
+      - "8554:8554"    # RTSP
+      - "1935:1935"    # RTMP Ingest (OBS Studio)
+      - "8889:8889"    # WebRTC (WHEP / WHIP)
+      - "8888:8888"    # HLS fallback
+    volumes:
+      - ./mediamtx.yml:/mediamtx.yml:ro
+    restart: unless-stopped
+
+  # CoTURN STUN & TURN Traversal Server
+  coturn:
+    image: coturn/coturn:latest
+    network_mode: host
+    volumes:
+      - ./coturn.conf:/etc/turnserver.conf:ro
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:

@@ -1,0 +1,6 @@
+{
+  "name": "BeamLive - Real-Time WebRTC Streaming Platform",
+  "description": "Ultra-low latency real-time video streaming, studio rooms, OBS ingest, RTSP bridge, viewer player and screen sharing powered by WebRTC.",
+  "requestFramePermissions": ["camera", "microphone", "display-capture"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

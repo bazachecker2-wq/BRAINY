@@ -1,0 +1,46 @@
+{
+  "collections": {
+    "users": {
+      "uid": {
+        "displayName": "string",
+        "balance": "number",
+        "avatarUrl": "string",
+        "completedTasks": "array",
+        "webhooks": {
+          "discord": "string",
+          "telegram": "string"
+        },
+        "createdAt": "timestamp"
+      }
+    },
+    "tasks": {
+      "taskId": {
+        "title": "string",
+        "description": "string",
+        "reward": "number",
+        "type": "string"
+      }
+    },
+    "rooms": {
+      "roomId": {
+        "ownerId": "string",
+        "name": "string",
+        "mode": "string",
+        "isPrivate": "boolean",
+        "invitedUsers": "array",
+        "createdAt": "timestamp"
+      }
+    },
+    "bounties": {
+      "bountyId": {
+        "creatorId": "string",
+        "creatorName": "string",
+        "roomId": "string",
+        "text": "string",
+        "reward": "number",
+        "status": "string",
+        "createdAt": "timestamp"
+      }
+    }
+  }
+}

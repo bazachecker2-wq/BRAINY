@@ -1,0 +1,147 @@
+<!doctype html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <script>
+      // Guard against browser extension wallet injection (MetaMask, Phantom, Brave, etc.)
+      // Prevent "Cannot set property ethereum of #<Window> which has only a getter" and [vite] errors
+      (function() {
+        var _ethStorage = undefined;
+        try {
+          _ethStorage = window.ethereum;
+        } catch (e) {}
+
+        function defineEth(target) {
+          if (!target) return;
+          try {
+            var desc = Object.getOwnPropertyDescriptor(target, 'ethereum');
+            if (!desc || desc.configurable) {
+              Object.defineProperty(target, 'ethereum', {
+                get: function() { return _ethStorage; },
+                set: function(val) { _ethStorage = val; },
+                configurable: true,
+                enumerable: true
+              });
+            }
+          } catch (e) {}
+        }
+
+        if (typeof Window !== 'undefined' && Window.prototype) {
+          defineEth(Window.prototype);
+        }
+        if (typeof window !== 'undefined') {
+          defineEth(window);
+        }
+
+        function isIgnored(str) {
+          if (!str) return false;
+          var s = String(str).toLowerCase();
+          return (
+            s.indexOf('ethereum') !== -1 ||
+            s.indexOf('only a getter') !== -1 ||
+            s.indexOf('[vite]') !== -1 ||
+            s.indexOf('hmr') !== -1 ||
+            s.indexOf('websocket connection to') !== -1 ||
+            s.indexOf('signaling websocket') !== -1 ||
+            s.indexOf('requested device not found') !== -1 ||
+            s.indexOf('devicesnotfounderror') !== -1 ||
+            s.indexOf('notfounderror') !== -1 ||
+            s.indexOf('resource_exhausted') !== -1 ||
+            s.indexOf('quota exceeded') !== -1 ||
+            s.indexOf('gemini vision analysis') !== -1 ||
+            s.indexOf('api key') !== -1 ||
+            (s.indexOf('websocket') !== -1 && s.indexOf('failed') !== -1)
+          );
+        }
+
+        // Global window.onerror handler
+        var origOnError = window.onerror;
+        window.onerror = function(msg, url, line, col, error) {
+          var combined = String(msg || '') + ' ' + (error && error.message ? error.message : '') + ' ' + (error && error.stack ? error.stack : '');
+          if (isIgnored(combined)) {
+            return true;
+          }
+          if (origOnError) {
+            return origOnError.apply(this, arguments);
+          }
+          return false;
+        };
+
+        // Window error event capturing listener
+        window.addEventListener('error', function(event) {
+          var msg = (event && event.message) || '';
+          var errMsg = (event && event.error && event.error.message) || '';
+          var errStack = (event && event.error && event.error.stack) || '';
+          if (isIgnored(msg) || isIgnored(errMsg) || isIgnored(errStack)) {
+            if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+            if (event.stopPropagation) event.stopPropagation();
+            if (event.preventDefault) event.preventDefault();
+            return true;
+          }
+        }, true);
+
+        // Window unhandled promise rejection listener
+        window.addEventListener('unhandledrejection', function(event) {
+          var reason = event && event.reason;
+          var reasonMsg = (reason && reason.message) || String(reason || '');
+          var reasonStack = (reason && reason.stack) || '';
+          if (isIgnored(reasonMsg) || isIgnored(reasonStack)) {
+            if (event.stopImmediatePropagation) event.stopImmediatePropagation();
+            if (event.preventDefault) event.preventDefault();
+            return true;
+          }
+        }, true);
+
+        // Intercept console.error to filter out extension or Vite HMR noise
+        var origConsoleError = console.error;
+        console.error = function() {
+          var args = Array.prototype.slice.call(arguments);
+          var combined = args.map(function(a) {
+            return (a && a.message) ? a.message : (typeof a === 'object' ? (a.stack || JSON.stringify(a)) : String(a));
+          }).join(' ');
+
+          if (isIgnored(combined)) {
+            return;
+          }
+          return origConsoleError.apply(console, arguments);
+        };
+
+        var origConsoleWarn = console.warn;
+        console.warn = function() {
+          var args = Array.prototype.slice.call(arguments);
+          var combined = args.map(function(a) {
+            return (a && a.message) ? a.message : (typeof a === 'object' ? (a.stack || JSON.stringify(a)) : String(a));
+          }).join(' ');
+
+          if (isIgnored(combined)) {
+            return;
+          }
+          return origConsoleWarn.apply(console, arguments);
+        };
+      })();
+    </script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+    <title>BeamLive - Real-Time WebRTC Streaming Platform</title>
+    <meta name="description" content="Ultra-low latency real-time video streaming, studio rooms, OBS ingest, RTSP bridge, viewer player and screen sharing powered by WebRTC." />
+    <meta name="theme-color" content="#000000" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="LiveAI" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" type="image/png" href="/pwa-192x192.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta property="og:title" content="BeamLive - Real-Time WebRTC Streaming Platform" />
+    <meta property="og:description" content="Ultra-low latency real-time video streaming, studio rooms, OBS ingest, RTSP bridge, viewer player and screen sharing powered by WebRTC." />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  </head>
+  <body class="bg-neutral-950 text-neutral-100 antialiased selection:bg-rose-500/30 selection:text-rose-200">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

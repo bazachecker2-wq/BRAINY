@@ -1,0 +1,31 @@
+###############################################
+# MediaMTX Configuration for BeamLive WebRTC
+###############################################
+
+# General
+logLevel: info
+logDestinations: [stdout]
+
+# RTSP Server
+rtsp: yes
+rtspAddress: :8554
+protocols: [tcp]
+
+# RTMP Server (OBS Ingest)
+rtmp: yes
+rtmpAddress: :1935
+
+# WebRTC Server (Direct Low-Latency WebRTC playback / WHEP)
+webrtc: yes
+webrtcAddress: :8889
+webrtcEncryption: no
+webrtcDirectIPGlobal: yes
+webrtcICEUDPMuxAddress: :8889
+
+# Paths configuration
+paths:
+  # Default fallback for dynamic streams (e.g. rtsp://mediamtx:8554/live/room123)
+  all:
+    source: publisher
+    sourceOnDemand: yes
+    runOnInit: ""

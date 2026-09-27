@@ -1,0 +1,103 @@
+@import "tailwindcss";
+
+@layer base {
+  body {
+    font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
+    background-color: #000000;
+    color: #ffffff;
+  }
+
+  code, pre, .font-mono {
+    font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
+  }
+
+  ::selection {
+    background-color: #f97316;
+    color: #000000;
+  }
+}
+
+/* Custom scrollbars */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(0, 0, 0, 0.9);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(249, 115, 22, 0.4);
+  border-radius: 0px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(249, 115, 22, 0.8);
+}
+
+/* Video mirrored for local selfie view */
+.video-mirror {
+  transform: scaleX(-1);
+}
+
+/* Glassmorphism helpers */
+.glass-panel {
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.pixelated {
+  image-rendering: pixelated;
+  image-rendering: crisp-edges;
+}
+
+.glass-panel-subtle {
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+@keyframes live-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.4;
+    transform: scale(0.92);
+  }
+}
+
+.animate-live-dot {
+  animation: live-pulse 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes reaction-float {
+  0% {
+    opacity: 0;
+    transform: translateY(0) scale(0.6) rotate(0deg);
+  }
+  15% {
+    opacity: 1;
+    transform: translateY(-20px) scale(1.15) rotate(-5deg);
+  }
+  50% {
+    transform: translateY(-120px) scale(1) rotate(6deg);
+  }
+  80% {
+    opacity: 0.9;
+    transform: translateY(-240px) scale(0.95) rotate(-4deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(-340px) scale(0.8) rotate(8deg);
+  }
+}
+
+.animate-reaction-float {
+  animation: reaction-float 3s ease-out forwards;
+}
