@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+@theme {
+  --radius-none: 0px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+}
+
 @layer base {
   body {
     font-family: 'JetBrains Mono', 'Courier New', Courier, monospace;
@@ -15,6 +25,14 @@
     background-color: #f97316;
     color: #000000;
   }
+}
+
+/* Pixel Grid Overlay */
+.pixel-grid {
+  background-image:
+    linear-gradient(rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  background-size: 20px 20px;
 }
 
 /* Custom scrollbars */

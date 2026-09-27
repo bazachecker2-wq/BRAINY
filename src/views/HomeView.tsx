@@ -243,29 +243,10 @@ export const HomeView: React.FC<HomeViewProps> = ({
 
   return (
     <div className="min-h-screen bg-black text-neutral-100 flex flex-col justify-between selection:bg-orange-500/30 selection:text-orange-200 font-mono">
-      {/* Top Navigation - Strict Top Bar Contract */}
-      <header className="px-6 py-4 border-b border-orange-500/20 bg-black/80 backdrop-blur-md sticky top-0 z-20 font-mono">
+      <header className="px-6 py-4 border-b border-neutral-800 bg-black sticky top-0 z-20">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-8 h-8 rounded-none border border-orange-500 flex items-center justify-center text-orange-500 font-bold text-xs tracking-wider">
-              BL
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-bold text-xs tracking-widest text-white uppercase">BeamLive</span>
-                <span className="text-[9px] text-orange-500 font-mono font-bold uppercase">
-                  [ WEBRTC + AI ]
-                </span>
-              </div>
-              <p className="text-[9px] text-neutral-400 font-mono uppercase">ULTRA-LOW LATENCY STREAMING SUITE</p>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 text-[10px] font-mono">
-            <div className="hidden sm:flex items-center gap-1.5 text-neutral-400 mr-4">
-              <span className="inline-block w-1.5 h-1.5 rounded-none bg-orange-500 animate-pulse"></span>
-              <span>LATENCY &lt; 200MS</span>
-            </div>
+          <span className="font-bold text-lg text-white tracking-tighter">BEAMLIVE</span>
+          <div className="flex items-center gap-4 text-xs font-bold text-neutral-400 uppercase tracking-widest">
             <AuthButton />
           </div>
         </div>

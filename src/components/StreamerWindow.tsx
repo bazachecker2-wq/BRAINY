@@ -1,5 +1,6 @@
 import React from 'react';
 import { RetroAvatar } from './RetroAvatar';
+import avatar1 from '../assets/images/pixel_avatar_1_1790466424222.jpg';
 
 interface StreamerWindowProps {
   room: any;
@@ -14,7 +15,7 @@ export const StreamerWindow: React.FC<StreamerWindowProps> = ({ room, onClick })
     >
       <div className="w-16 h-16 rounded-none bg-neutral-900 border-4 border-orange-500/50 mb-4 overflow-hidden relative">
         <RetroAvatar 
-          src="/src/assets/images/pixel_avatar_1_1790466424222.jpg" 
+          src={avatar1} 
           alt={room.streamerName} 
           className="w-full h-full object-cover"
         />

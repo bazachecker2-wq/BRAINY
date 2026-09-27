@@ -4,6 +4,7 @@ import { GoogleAuthProvider, signInWithPopup, signOut } from 'firebase/auth';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { LogIn, LogOut, User, AlertCircle, X, Loader2 } from 'lucide-react';
+import { RetroAvatar } from './RetroAvatar';
 
 export const AuthButton: React.FC = () => {
   const [user, loading] = useAuthState(auth);
@@ -70,7 +71,7 @@ export const AuthButton: React.FC = () => {
             aria-label="Профиль пользователя"
           >
             {user.photoURL ? (
-              <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
+              <RetroAvatar src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
             ) : (
               <User className="w-5 h-5 text-neutral-400" />
             )}

@@ -415,7 +415,7 @@ export const AIObserverPanel: React.FC<AIObserverPanelProps> = ({
   return (
     <div className={`flex flex-col border rounded-none overflow-hidden transition-all duration-300 font-mono text-neutral-200 ${containerBg} ${className}`}>
       {/* Top Header */}
-      <div className="p-3.5 border-b border-orange-500/20 bg-black flex items-center justify-between shrink-0">
+      <div className="p-3.5 border-b border-orange-500/20 bg-black flex items-center justify-between shrink-0 drag-handle cursor-grab">
         <div className="flex items-center gap-2.5">
           <div className="relative">
             <div className="w-8 h-8 rounded-none bg-orange-500 flex items-center justify-center text-black font-bold shadow-md">

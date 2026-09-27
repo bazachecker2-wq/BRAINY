@@ -1,4 +1,5 @@
 import React, { useEffect, useRef, useState, useCallback } from 'react';
+import Draggable from 'react-draggable';
 import { SignalingClient } from '../services/signaling';
 import { WebRTCManager, CameraDeviceInfo } from '../services/webrtcManager';
 import {
@@ -94,6 +95,7 @@ export const RoomView: React.FC<RoomViewProps> = ({
   // Presentation / Translucent HUD Mode
   const [isPresentationMode, setIsPresentationMode] = useState(false);
   const [isTheaterMode, setIsTheaterMode] = useState(false);
+  const [isBroadcastMode, setIsBroadcastMode] = useState(false);
 
   // Multiple Cameras & Mobile Facing Mode
   const [facingMode, setFacingMode] = useState<'user' | 'environment'>('user');
@@ -686,18 +688,18 @@ export const RoomView: React.FC<RoomViewProps> = ({
             <span className="hidden sm:inline">{isHandRaised ? 'РУКА ПОДНЯТА' : 'ПОДНЯТЬ РУКУ'}</span>
           </button>
 
-          {/* Theater Mode Toggle */}
+          {/* Broadcast Mode Toggle */}
           <button
-            onClick={() => setIsTheaterMode(!isTheaterMode)}
+            onClick={() => setIsBroadcastMode(!isBroadcastMode)}
             className={`hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-none border text-xs font-bold uppercase transition ${
-              isTheaterMode
-                ? 'bg-orange-500/20 text-orange-400 border-orange-500/30 shadow-sm'
-                : 'bg-neutral-950 hover:bg-neutral-900 text-neutral-300 border-orange-500/20'
+              isBroadcastMode
+                ? 'bg-orange-500 text-black border-orange-600 shadow-md'
+                : 'bg-neutral-950 hover:bg-neutral-900 text-orange-400 border-orange-500/20'
             }`}
-            title="Режим кинотеатра"
+            title="Режим трансляции (перемещение окон)"
           >
-            <Film className="w-3.5 h-3.5 text-orange-400" />
-            <span>{isTheaterMode ? 'КИНО: ВКЛ' : 'КИНОТЕАТР'}</span>
+            <Maximize2 className="w-3.5 h-3.5" />
+            <span>{isBroadcastMode ? 'ТРАНС: ВКЛ' : 'ТРАНСЛЯЦИЯ'}</span>
           </button>
 
           {/* Mobile Camera Flip Button */}
@@ -784,7 +786,7 @@ export const RoomView: React.FC<RoomViewProps> = ({
       {/* Main Studio Body with Video Stage + Docked AI Observer */}
       <div className="flex-1 flex overflow-hidden relative pb-16 sm:pb-20 font-mono">
         {/* Left / Center Video Stage as Full-Screen Background */}
-        <main className="absolute inset-0 w-full h-full z-0 p-2 sm:p-4 overflow-hidden flex flex-col justify-center bg-black">
+        <main className="absolute inset-0 w-full h-full z-0 p-2 sm:p-4 overflow-hidden flex flex-col justify-center bg-black pixel-grid">
           {/* Error Warning */}
           {errorMessage && (
             <div className="mb-4 mx-auto max-w-2xl w-full p-3 rounded-none bg-orange-500/10 border border-orange-500/30 text-orange-300 text-xs flex items-center justify-between gap-3 shadow-lg z-30">
@@ -862,7 +864,7 @@ export const RoomView: React.FC<RoomViewProps> = ({
                           : 'border-white/10 hover:border-orange-500/20 opacity-75 hover:opacity-100'
                       }`}
                     >
-                      <VideoPlayer
+                        <VideoPlayer
                         stream={s.stream}
                         displayName={s.displayName}
                         isLocal={s.isLocal}
@@ -966,45 +968,57 @@ export const RoomView: React.FC<RoomViewProps> = ({
 
       {/* Full Screen Drawer Mode for AI Observer if undocked or on mobile */}
       {isAIOpen && (!isAIDocked || (typeof window !== 'undefined' && window.innerWidth < 1024)) && (
-        <div className="fixed inset-0 lg:top-0 lg:right-0 lg:bottom-0 lg:left-auto lg:relative z-50 w-full lg:w-[420px] p-0 lg:p-3 animate-in slide-in-from-right duration-300">
-          <AIObserverPanel
-            roomId={roomId}
-            getActiveFrameBase64={getActiveFrameBase64}
-            streamEvents={streamEvents}
-            onAddStreamEvent={(evt) => setStreamEvents((prev) => [evt, ...prev])}
-            isDocked={false}
-            onToggleDock={() => setIsAIDocked(true)}
-            onClose={() => setIsAIOpen(false)}
-            isTranslucent={isPresentationMode}
-            className="h-full w-full shadow-2xl"
-          />
-        </div>
+        <Draggable
+          disabled={!isBroadcastMode}
+          handle=".drag-handle"
+          bounds="parent"
+        >
+          <div className="fixed inset-0 lg:top-0 lg:right-0 lg:bottom-0 lg:left-auto lg:relative z-50 w-full lg:w-[420px] p-0 lg:p-3 animate-in slide-in-from-right duration-300">
+            <AIObserverPanel
+              roomId={roomId}
+              getActiveFrameBase64={getActiveFrameBase64}
+              streamEvents={streamEvents}
+              onAddStreamEvent={(evt) => setStreamEvents((prev) => [evt, ...prev])}
+              isDocked={false}
+              onToggleDock={() => setIsAIDocked(true)}
+              onClose={() => setIsAIOpen(false)}
+              isTranslucent={isPresentationMode}
+              className="h-full w-full shadow-2xl"
+            />
+          </div>
+        </Draggable>
       )}
 
       {/* Chat Drawer for Streamer - Responsive full-screen on mobile */}
       {isChatOpen && (
-        <div className="fixed inset-0 lg:top-0 lg:right-0 lg:bottom-0 lg:left-auto lg:relative z-50 w-full lg:w-[420px] p-0 lg:p-3 animate-in slide-in-from-right duration-300">
-          <StreamChatPanel
-            isOpen={isChatOpen}
-            onClose={() => setIsChatOpen(false)}
-            messages={chatMessages}
-            presence={presence}
-            onSendMessage={handleSendMessage}
-            onSendReaction={handleSendReaction}
-            currentPeerId={managerRef.current?.peerId || ''}
-            currentDisplayName={managerRef.current?.displayName || 'Ведущий'}
-            onUpdateDisplayName={handleUpdateDisplayName}
-            role={currentRole}
-            roomId={roomId}
-            isDocked={false}
-            onInviteToCoHost={(peerId) => {
-              if (managerRef.current) {
-                managerRef.current.inviteToCoHost(peerId);
-              }
-            }}
-            className="h-full w-full shadow-2xl"
-          />
-        </div>
+        <Draggable
+          disabled={!isBroadcastMode}
+          handle=".drag-handle"
+          bounds="parent"
+        >
+          <div className="fixed inset-0 lg:top-0 lg:right-0 lg:bottom-0 lg:left-auto lg:relative z-50 w-full lg:w-[420px] p-0 lg:p-3 animate-in slide-in-from-right duration-300">
+            <StreamChatPanel
+              isOpen={isChatOpen}
+              onClose={() => setIsChatOpen(false)}
+              messages={chatMessages}
+              presence={presence}
+              onSendMessage={handleSendMessage}
+              onSendReaction={handleSendReaction}
+              currentPeerId={managerRef.current?.peerId || ''}
+              currentDisplayName={managerRef.current?.displayName || 'Ведущий'}
+              onUpdateDisplayName={handleUpdateDisplayName}
+              role={currentRole}
+              roomId={roomId}
+              isDocked={false}
+              onInviteToCoHost={(peerId) => {
+                if (managerRef.current) {
+                  managerRef.current.inviteToCoHost(peerId);
+                }
+              }}
+              className="h-full w-full shadow-2xl"
+            />
+          </div>
+        </Draggable>
       )}
 
       {/* Floating Bottom Media Controls */}

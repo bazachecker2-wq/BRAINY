@@ -302,6 +302,7 @@ export const VideoPlayer: React.FC<VideoPlayerProps> = ({
         } ${
           isMirroredState && !isScreenShare ? 'scale-x-[-1]' : ''
         } ${isVideoMuted ? 'opacity-0' : 'opacity-100'}`}
+        style={{ imageRendering: 'pixelated' }}
       />
 
       {/* Floating Live Reaction Emojis Overlay */}

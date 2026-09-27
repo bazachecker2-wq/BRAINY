@@ -153,7 +153,7 @@ export const StreamChatPanel: React.FC<StreamChatPanelProps> = ({
       } ${className}`}
     >
       {/* Top Header & Tab Navigation */}
-      <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-orange-500/20 bg-black shrink-0">
+      <div className="flex items-center justify-between px-3.5 py-2.5 border-b border-orange-500/20 bg-black shrink-0 drag-handle cursor-grab">
         <div className="flex items-center gap-1.5 p-0.5 rounded-none bg-neutral-950 border border-orange-500/10">
           <button
             onClick={() => setActiveTab('chat')}
